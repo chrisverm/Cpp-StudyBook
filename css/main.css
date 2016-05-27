@@ -1,0 +1,40 @@
+body
+{
+	margin: 0px;
+	background-color: #1E1E1E;
+	color: #FFFFFF;
+}
+
+#toc
+{
+	position: fixed;
+	width: 30%;
+	right: 0px;
+}
+
+#toc ul
+{
+	list-style-type:  none;
+	text-align: right;
+	margin-right: 40px;
+}
+
+#toc a
+{
+	color: #FFFFFF;
+	text-decoration: none;
+}
+#toc a:hover
+{
+	text-decoration: underline;
+}
+
+#content
+{
+	width: 70%;
+}
+
+#content p
+{
+	text-align: justify;
+}
