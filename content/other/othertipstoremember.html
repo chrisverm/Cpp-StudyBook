@@ -1,0 +1,12 @@
+<h1>Other Tips To Remember</h1>
+<h3>Lifetime of Allocated Memory</h3>
+<p>Always keep an eye on the scope of memory being created, especially on the stack. For instance:</p>
+<code class="block">
+char* Foobar::GetTempBuffer( void )
+{
+	char buffer[ 1024 ];
+	memset( buffer, 1024, 0 );
+	return buffer;
+}
+</code>
+<p>The variable 'buffer' here is created on the stack. Because of this, as soon as the method has finished executing and has been returned out of the memory allocated for 'buffer' is released. The pointer that the method returns will still exist, but it will point to some other data pushed onto the stack it was not meant to reference.</p>

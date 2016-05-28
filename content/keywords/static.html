@@ -1,1 +1,49 @@
 <h1>Static Keyword</h1>
+<p>The <code>static</code> keyword is a modifier that defines the lifetime of variables or the accessibility of functions. <code>static</code> variables are said to have "internal linkage", as they can be used anywhere in the scope they are defined within (the translation unit), but are not visible and cannot be referenced outside that. There are three main scopes that vary the use of <code>static</code> :</p>
+<h3>Inside a Function</h3>
+<p>Below, the <code>static</code> variable 'id' is created and set equal to 1 the first time that getEmployeeId() is called. Upon exiting the function 'id' is not destroyed and in subsequent calls to the function 'id' is not created again - in fact it is as if that line is ignored (though 'id' still exists) and only the return statement is run. So on the second call getEmployeeId() would return 2, on the third it returns 3, etc.</p>
+<code class="block">
+unsigned int getEmployeeID( void )
+{
+	static unsigned int id = 1;
+	return id++;
+}
+</code>
+<h3>Inside a Class</h3>
+<p>Inside a class both variables and methods can be declared <code>static</code>. Their accessibility/visibility outside the class is determined by their public/protected/private specificity inside the class. Unlike non-static variables and methods inside a class, <code>static</code> members can be accessed without an instance of the class <i>and</i> the value of <code>static</code> variables remains consistent across all instances of that class. In the below example, any instance of Company using 'employeeCount' would be retrive the same incrementing value. Notice that the <code>static</code> variable can be declared within the class, but it must be defined with an initial value outside the class.</p>
+<code class="block">
+class Company
+{
+private:
+	static unsigned int totalEmployeeCount;
+
+public:
+	static void incrementEmployeeCount( void )
+	{
+		totalEmployeeCount++;
+	}
+};
+unsigned int Company::totalEmployeeCount = 0;
+
+int main( void )
+{
+	Company::incrementEmployeeCount();
+	Company::incrementEmployeeCount();
+
+	return 0;
+}
+</code>
+<h3>Inside a Namespace (<span style="font-size:12pt">outside of classes and functions</span>)</h3>
+<p>Lastly, declaring a variable or function <code>static</code> outside of a class or function hides it from any other translation unit. It is only accessible in the translation unit in which it is declared. So in the following example, the <code>static</code> variable 'count' is only accessible in Foobar.cpp, even though it is declared outside of any class or method.</p>
+<p>As a side note, typically static variables put in the namespace scope are declared and defined within the .cpp file (as shown below) and not the .h file - it's not that you couldn't put it in the .h, putting them in the .cpp is just considered better practice.</p>
+<code class="block">
+// inside Foobar.cpp
+#include "Foobar.h"
+
+static unsigned int count;
+
+Foobar::Foobar( void )
+{
+    // ...
+}
+</code>
