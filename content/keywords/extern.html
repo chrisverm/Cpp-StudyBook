@@ -1,1 +1,26 @@
 <h1>Extern Keyword</h1>
+<p>The <code>extern</code> keyword tells the compiler that the variable or function it acts upon is declared on that line but defined somewhere else in the program - a forward declaration of sorts. Opposite to <code>static</code> having "internal linkage", <code>extern</code> has "external linkage". When using it the <code>extern</code> is only required on variables - it is optional for function declerations. Unless otherwise specified functions are assumed to be <code>extern</code>, so writing <code>extern</code> is redundant (though not necessarily bad practice).</p>
+<code class="block">
+// globals.cpp
+double gravityX = 0.0;
+double gravityY = 9.8;
+	
+char* foo() { return "foo"; }
+char* bar() { return "bar"; }
+	
+// main.h
+extern double gravityX;
+	
+extern char* foo();
+char* bar();
+
+int main( void )
+{
+    extern double gravityY;
+	
+    std::cout << gravityX << " | " << gravityY << std::endl;   // outputs "0.0 | 9.8"
+	std::cout << foo() << bar() << std::endl;                  // outputs "foobar"
+	
+	return 0;
+}
+</code>
