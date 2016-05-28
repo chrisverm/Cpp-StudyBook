@@ -38,3 +38,8 @@ body
 {
 	text-align: justify;
 }
+
+#content > *:not(hr)
+{
+	padding-left: 10px;
+}
