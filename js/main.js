@@ -10,6 +10,7 @@ function onBodyLoad()
 				section = toc[ i ].textContent.replace( /[ |,]/g, "" ).toLowerCase();
 				break;
 			case "LI":
+				if ( toc[ i ].innerHTML.search( /\<strike\>/ ) != -1 ) break;
 				topic = toc[ i ].textContent.replace( /[ |,]/g, "" ).toLowerCase();
 				id = section + "_" + topic;
 				
