@@ -33,7 +33,7 @@ function onBodyLoad()
 var KEYWORDS = [ "class", "const", "extern", "new", "private", "protected", "public", "return", /*"signed",*/ "static", "struct", "unsigned", "virtual", "void" ];
 var DATATYPES = [ "bool", "char", "short", "int", "long", "float", "double" ];
 var CASTING = [ "static_cast", "dynamic_cast" ];
-var CLASSES = [ "Foobar", "BaseClass", "DerivedClass", "Company", "Animal", "Bird", "Cat", "Dog", "string", "A", "B", "C" ];
+var CLASSES = [ "Foobar", "BaseClass", "DerivedClass", "Company", "Animal", "Bird", "Cat", "Dog", "string" ];
 
 function colorCode( html )
 {

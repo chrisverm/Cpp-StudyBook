@@ -1,0 +1,51 @@
+<h1>Virtual Keyword</h1>
+<p>The <code>virtual</code> keyword is useful in determining method calls between classes which have methods of the same name.</p>
+<p>We can define two classes - a base class and a class that derives from the base - as such :</p>
+<code class="block">
+struct BaseClass
+{
+	const char* GetName( void ) { return "BaseClass"; }
+};
+struct DerivedClass
+{
+	const char* GetName( void ) { return "DerivedClass"; }
+};
+</code>
+<p>In any instance we create a BaseClass or DerivedClass, GetName() will be called on the corresponding class in which that object is being stored as :</p>
+<code class="block">
+BaseClass oBB 	 = BaseClass();			oBB.GetName(); // outputs "BaseClass"
+BaseClass oBD 	 = DerivedClass();		oBD.GetName(); // outputs "BaseClass"
+DerivedClass oDD = DerivedClass();		oDD.GetName(); // outputs "DerivedClass"
+</code>
+<p>The same holds true if these are pointers :</p>
+<code class="block">
+BaseClass* pBB 	  = BaseClass();		pBB->GetName(); // outputs "BaseClass"
+BaseClass* pBD 	  = DerivedClass();		pBD->GetName(); // outputs "BaseClass"
+DerivedClass* pDD = DerivedClass();		pDD->GetName(); // outputs "DerivedClass"
+</code>
+<p>Using the <code>virtual</code> keyword on member functions mixes this up a bit. Using <code>virtual</code> will cause GetName() to be called on the most derived version of the function stored in the data type being stored.</p>
+<p>Take directly from <a href="learncpp.com/cpp-tutorial/122-virtual-functions/" target="_blank">LearnCpp</a> :</p>
+<p>"A virtual function is a special type of function that resolves to the most-derived version of the function with the same signature. This capability is known as polymorphism."</p>
+<p>In other words, when a <code>virtual</code> method is called the computer checks the object the method is contained in for child classes with a redefinition for the <code>virtual</code> method. If it does not have one it calls the original method. If there is a child with a redefinition then the computer finds the most derived method of the same declaration (up to the data type being stored) whose "parents" are all <code>virtual</code> and calls it.</p>
+<p>In the case of objects being stored as non-pointers nothing changes as compared to previously not using the <code>virtual</code> keyword :</p>
+<code class="block">
+struct BaseClass
+{
+    virtual const char* GetName( void ) { return "BaseClass"; }
+};
+struct DerivedClass
+{
+    virtual const char* GetName( void ) { return "DerivedClass"; }
+};
+
+BaseClass oBB	 = BaseClass();			oBB.GetName(); // outputs "BaseClass"
+BaseClass oBD	 = DerivedClass();		oBD.GetName(); // outputs "BaseClass"
+DerivedClass oDD = DerivedClass();		oDD.GetName(); // outputs "DerivedClass"
+</code>
+<p>Without pointers, no matter how an object is created (in reference to "oBD"), it will be stored as the data type on the lefthand side of the assignment operator. This is because of a process known as "object slicing" - a BaseClass object can only keep track of the  variables/functions in the BaseClass, so all other data (such as from DerivedClass) is "sliced" from the object. Pointers on the other hand :</p>
+<code class="block">
+BaseClass* pBB	  = new BaseClass();		pBB->GetName(); // outputs "BaseClass"
+BaseClass* pBD	  = new DerivedClass();		pBD->GetName(); // outputs "DerivedClass"
+DerivedClass* pDD = new DerivedClass();		pDD->GetName(); // outputs "DerivedClass"
+</code>
+<p>The "pBD" variable here is what changes things up. It is important to note that pointers to a data type are <i>not</i> the data type itself - it is a memory address which links to some memory on the heap. The data type connected to the pointer only tells the compiler how to treat the memory at that address. So when "pBD" is created, it is <i>actually</i> created as a DerivedClass being stored on the heap, so when GetName() is called and the memory address at "pBD" is accessed the computer is actually able to access DerivedClass as no object slicing took place.</p>

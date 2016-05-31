@@ -39,6 +39,12 @@ body
 	text-align: justify;
 }
 
+#content a
+{
+	color: #FFFFFF;
+	text-decoration: underline;
+}
+
 #content > *:not(hr)
 {
 	padding-left: 10px;
