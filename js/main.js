@@ -11,7 +11,7 @@ function onBodyLoad()
 				break;
 			case "LI":
 				if ( toc[ i ].innerHTML.search( /\<strike\>/ ) != -1 ) break;
-				topic = toc[ i ].textContent.replace( /[ |,]/g, "" ).toLowerCase();
+				topic = toc[ i ].textContent.replace( /\W/g, "" ).toLowerCase();
 				id = section + "_" + topic;
 				
 				toc[ i ].innerHTML = "<a href=\"#" + id + "\">" + toc[ i ].innerHTML + "</a>";
