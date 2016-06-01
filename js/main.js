@@ -33,7 +33,7 @@ function onBodyLoad()
 var KEYWORDS = [ "class", "const", "extern", "new", "private", "protected", "public", "return", /*"signed",*/ "static", "struct", "unsigned", "virtual", "void" ];
 var DATATYPES = [ "bool", "char", "short", "int", "long", "float", "double" ];
 var CASTING = [ "static_cast", "dynamic_cast" ];
-var CLASSES = [ "Foobar", "BaseClass", "DerivedClass", "Company", "Animal", "Bird", "Cat", "Dog", "string" ];
+var CLASSES = [ "Foobar", "BaseClass", "DerivedClass", "TopLevelClass", "Company", "Animal", "Pet", "Bird", "Cat", "Dog", "string" ];
 
 function colorCode( html )
 {
@@ -44,23 +44,74 @@ function colorCode( html )
 	{
 		block = list[ i ].textContent + '\n';
 		
+		// strings
+		block = block.replace( /\n[^\n|\/\/]*\"[^\"|\n]*\"/g, function( str ) {
+			str = str.replace( /\"[^\"]*\"/g, function( str2 ) {
+				return "<span class=\"string\">" + str2 + "</span>";
+			} );
+			
+			return str;
+		} );
+		
+		// comments
+		block = block.replace( /\/\/.*\n/g, function( str ) {
+			return "<span class=\"comment\">" + str.slice( 0, -1 ) + "</span>\n";
+		});
+		
 		// preprocessor directives
 		block = block.replace( /[^\n]*\#include[^\n]*\n/g, function( str ) {
 			if ( str.search( "\/\/" ) != -1 ) return str.replace( /\</, "&lt;" ).replace( /\>/, "&gt;" );
 			return "<span class=\"preprocessor\">#include</span><span class=\"include\">" + str.replace( /\</, "&lt;" ).replace( /\>/, "&gt;" ).substr( 8 ) + "</span>";
 		} );
 		
-		// strings
-		block = block.replace( /[^\n]*\"[^\"|\n]*\"/g, function( str ) {
-			if ( str.search( "\/\/" ) != -1 ) return str;
-			if ( str.search( "#include" ) != -1 ) return str;
-			return str.replace( /\"[^\"]*\"/g, "" ) + "<span class=\"string\">" + str.replace( /[^\"]*\"/, "\"" ) + "</span>";
-		});
+		// classes
+		for ( j = 0; j < CLASSES.length; j++ )
+		{
+			// [ClassName] variable | [ClassName]* variable | [ClassName]::Method
+			block = block.replace( new RegExp( CLASSES[ j ] + "( [a-z]|\\* |\:\:)", "g" ), function( str ) {
+				return "<span class=\"class\">" + str.substring( 0, str.length - 2 ) + "</span>" + str.slice( -2 );
+			} );
+			
+			// new [ClassName]
+			block = block.replace( new RegExp( "new " + CLASSES[ j ], "g" ), function( str ) {
+				return "new <span class=\"class\">" + str.substring( 4, str.length ) + "</span>";
+			} );
+			
+			// class [ClassName]
+			block = block.replace( new RegExp( "class " + CLASSES[ j ], "g" ), function( str ) {
+				return "class <span class=\"class\">" + str.substring( 6, str.length ) + "</span>";
+			} );
+			
+			// public [ClassName]
+			block = block.replace( new RegExp( "public " + CLASSES[ j ], "g" ), function( str ) {
+				return "public <span class=\"class\">" + str.substring( 7, str.length ) + "</span>";
+			} );
+		}
 		
-		// comments
-		block = block.replace( /\/\/.*\n/g, function( str ) {
-			return "<span class=\"comment\">" + str.slice( 0, -1 ) + "</span>\n";
-		});
+		// data types
+		for ( j = 0; j < DATATYPES.length; j++ )
+		{
+			block = block.replace( new RegExp( DATATYPES[ j ] + "[^a-z]", "g" ), function( str ) {
+				return "<span class=\"datatype\">" + DATATYPES[ j ] + "</span>" + str.slice( -1 );
+			} );
+		}
+		
+		// keywords
+		for ( j = 0; j < KEYWORDS.length; j++ )
+		{
+			block = block.replace( new RegExp( KEYWORDS[ j ] + "[ |\\:]", "g" ), function( str )
+			{
+				return "<span class=\"keyword\">" + KEYWORDS[ j ] + "</span>" + str.slice( -1 );
+			} );
+		}
+		
+		
+		/*
+		// preprocessor directives
+		block = block.replace( /[^\n]*\#include[^\n]*\n/g, function( str ) {
+			if ( str.search( "\/\/" ) != -1 ) return str.replace( /\</, "&lt;" ).replace( /\>/, "&gt;" );
+			return "<span class=\"preprocessor\">#include</span><span class=\"include\">" + str.replace( /\</, "&lt;" ).replace( /\>/, "&gt;" ).substr( 8 ) + "</span>";
+		} );
 		
 		// keywords
 		for ( j = 0; j < KEYWORDS.length; j++ )
@@ -93,6 +144,7 @@ function colorCode( html )
 				return str[ 0 ] + "<span class=\"class\">" + str.substr( 1, str.length - 2 ) + "</span>" + str[ str.length - 1];
 			});
 		}
+		*/
 		
 		list[ i ].innerHTML = block;
 	}
