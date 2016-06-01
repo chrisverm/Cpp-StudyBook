@@ -19,6 +19,11 @@ body
 	margin-right: 40px;
 }
 
+#toc strike
+{
+	color: #5F5F5F;
+}
+
 #toc a
 {
 	color: #FFFFFF;
