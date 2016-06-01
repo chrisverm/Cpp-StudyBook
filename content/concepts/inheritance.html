@@ -1,0 +1,172 @@
+<h1>Inheritance</h1>
+<p>Inheritance is the ability for programmers to write clases with variables and methods that can be re-used in <i>other</i> classes.</p>
+<p>For instance, let's say we were building some application to keep track of animals in the home - we may have classes for a Bird, Cat, and Dog. Each of these classes (or, in the case of this example, pets) have things in common that we'll have to write multiple times - name, age, the number of legs each have, the sounds they make, etc. - at least, without inheritance we do. With inheritance we can create an Animal or Pet class that would allows us to keep track of this information in a single place and ensure that all of our pets must also have this information.</p>
+<h3>Single Inheritance</h3>
+<code class="block">
+#include &lt;iostream&gt;
+	
+class Animal
+{
+	unsigned int m_numLegs;
+	char* m_sound;
+	
+protected:
+	Animal( unsigned int p_numLegs, char* p_sound )
+	{
+		m_numLegs = p_numLegs;
+		m_sound = p_sound;
+	}
+
+public:
+	void speak( void )
+	{
+		std::cout << m_sound;
+	}
+	
+	unsigned int getNumLegs( void )
+	{
+		return m_numLegs;
+	}
+};
+	
+class Bird : public Animal
+{
+public:
+	Bird( void ) : Animal( 2, "Tweet!" ) { }
+};
+
+class Cat : public Animal
+{
+public:
+	Cat( void ) : Animal( 4, "Meow!" ) { }
+};
+
+class Dog : public Animal
+{
+public:
+	Dog( void ) : Animal( 4, "Woof!" ) { }
+};
+	
+int main( void )
+{
+	Bird bird;
+	bird.speak(); // outputs "Tweet!"
+	
+	Cat cat;
+	cat.speak();  // outputs "Meow!"
+	
+	Dog dog;
+	dog.speak();  // outputs "Woof!"
+	
+	return 0;
+}
+</code>
+<p>When using inheritance, knowing the order or constructor calls can be a bit confusing. When you create a derived class and it's constructor is called, the base class also has to be created and it's constructor called. In inheritance, the order of constructor calls starts with the most base class and works its way up the "tree" of derived classes. For example :</p>
+<code class="block">
+#include &lt;iostream&gt;
+	
+class BaseClass
+{
+public:
+	BaseClass( void )
+	{
+		std::cout << "BaseClass() ";
+	}
+};
+
+class DerivedClass : public BaseClass
+{
+public:
+	DerivedClass( void )
+	{
+		std::cout << "DerivedClass() ";
+	}
+};
+	
+class TopLevelClass : public DerivedClass
+{
+public:
+	TopLevelClass( void )
+	{
+		std::cout << "TopLevelClass() ";
+	}
+};
+	
+int main( void )
+{
+	BaseClass a;     // outputs "BaseClass() "
+	DerivedClass b;  // outputs "BaseClass() DerivedClass() "
+	TopLevelClass c; // outputs "BaseClass() DerivedClass() TopLevelClass() "
+	
+	return 0;
+}
+</code>
+<h3>Multiple Inheritance</h3>
+<p>Here's where things can get tricky. In C++ it is possible for a class to inherit from multiple base classes at once. Problems cann arise when two base classes have variables and/or methods named the same or, to reference the last example in Single Inheritance, if TopLevelClass were to try and inherit from Both DerivedClass and BaseClass. It is widely believed that multiple inheritance complicates code design and makes things harder to debug and so it's use can be a controversial topic. Nonetheless it is a tool at the disposal of all C++ programmers.</p>
+<p>Here is an example of multiple inheritance based on the Animal example from before :</p>
+<code class="block">
+#include &lt;iostream&gt;
+	
+class Animal
+{
+	unsigned int m_numLegs;
+	char* m_sound;
+	
+protected:
+	Animal( unsigned int p_numLegs, char* p_sound )
+	{
+		m_numLegs = p_numLegs;
+		m_sound = p_sound;
+	}
+
+public:
+	void speak( void )
+	{
+		std::cout << m_sound;
+	}
+	
+	unsigned int getNumLegs( void )
+	{
+		return m_numLegs;
+	}
+};
+	
+class Pet
+{
+	char* m_name;
+	unsigned int m_age;
+
+protected:
+	Pet( char* p_name, unsigned int p_age )
+	{
+		m_name = p_name;
+		m_age = p_age;
+	}
+	
+	char* getName( void )
+	{
+		return m_name;
+	}
+	
+	unsigned int getAge( void )
+	{
+		return m_age;
+	}
+};
+	
+class Bird : public Animal, public Pet, public Animal
+{
+public:
+	Bird( void ) : Animal( 2, "Tweet!" ), Pet( "Kiwi", 3 ) { }
+};
+	
+int main( void )
+{
+	Bird bird;
+	std::cout << "My name is " << bird.getName() << ". "; // outputs "My name is Kiwi. "
+	bird.speak(); // outputs "Tweet!"
+	
+	return 0;
+}
+</code>
+<p>Now if the Animal and Pet classes had a method with the same name - let's say Pet had speak() - then if the user tried to call speak() the compiler would through an error, saying the method was "ambiguous". There are more pitfalls of using multiple inheritance but this basic example gives a good indication of the type of those potential problems.</p>
