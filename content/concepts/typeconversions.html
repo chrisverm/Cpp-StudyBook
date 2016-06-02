@@ -1,0 +1,54 @@
+<h1>Type Conversions</h1>
+<p>Under the hood all data is represented by the 0s and 1s of binary. It is the data type that lets the programmer tell the compiler how said data should be translated and used. Similar values may be stored in larger or smaller sequences of bits - shorts versus integers versus longs - or even stored differently in their entirety - integers versus floating-point numbers. When the programmer wants two different data types to interact (arithmetic operators, parameters, return types, etc.) somehow the computer must make the data types match so the interaction can take place. There are two ways this data type matching can occur - either the computer must do it itself (implicit) or the programmer has to make some sort of indication (explicit) :</p>
+<h3>Implicit</h3>
+<p>Implicit type conversions (also known as coercion) occur when the programmer does not explicitly tell the compiler to convert one data type to another. Instead, the compiler must perform this conversion itself to carry out the operation.</p>
+<code class="block">
+float f = 5;
+double d = 2.3f;
+	
+int i = f + d;
+</code>
+<p>In the above examples, the first two are pretty simple. The value '5', an integer, is being assigned to the float 'f'. So the compiler implicitly changes integer '5' to a float and then performs the assignment operator. And the same idea with the second line - '2.3f', a float, is implicitly changed to/treated as a double so the assignment operation can run.</p>
+<p>The last line is a bit more confusing. The line wants to add a float and double and store it as an integer. Your first thought may be that 'f' and 'd' on this line are implicitly casted as integers so the addition can take place and it can be easily stored as an integer in 'i', but this is not the case. What actually happens is, through a process of arithmetic conversions called the "priority of operands", 'f' is converted from a float to a double, the addition is done, and the resulting double is then changed into an integer for storage.</p>
+<p>The priority of operands is as follows :</p>
+<ul>
+	<li>long double (highest)</li>
+	<li>double</li>
+	<li>float</li>
+	<li>unsigned long long</li>
+	<li>long long</li>
+	<li>unsigned long</li>
+	<li>long</li>
+	<li>unsigned int</li>
+	<li>int (lowest)</li>
+</ul>
+<h3>Explicit</h3>
+<p>Explicit type conversions (also known as casting) occur when the programmer tells the compiler outright in code to treat a value of one data type as a different data type.</p>
+<code class="block">
+int i = 10;
+int j = 3;
+float k1 = i / j;        // 'k1' will equal 3.00f
+float k2 = (float)i / j; // 'k2' will equal 3.33f
+</code>
+<p>In the above example, because the operation on the line with 'k1' has no explicit cast the result will keep 'i' and 'j' as integers during the division and thus drop the decimal remainder before being implicitly converted to a float and stored. Integers cannot store decimal values and this is why the decimal is dropped before the implicit conversion and assignment. 'k2' on the other hand will be arithmetically correct and equal 3.33 (with repeating 3s) because 'i' is explicitly casted into a float and - because of the "priority of operands" - 'j' will also be (implicitly) converted into a float.</p>
+<p>In the above example 'i' is catsed to a float in a "C-style cast". C-style casts can be represented int two ways :</p>
+<code class="block">
+int i = 10;
+int j = 3;
+float ka = (float)i / k;
+float kb = float( i ) / k;
+</code>
+<p>Neither representation is more correct than the other. It is important to note that C-style casts are not checked by the compiler and thus can fail at run-time or return unwanted values. C++ casts, on the otherhand, provide the compiler with a way to check the cast at compile time to prevent these issues, making casting safer/more reliable. The <code>static_cast</code> provides a C++ equivalent to the C-style casting shown above, making sure to only cast between compatible types.</p>
+<code class="block">
+int i = 10;
+int j = 3;
+float k = static_cast&lt;float&gt;( i ) / k;
+</code>
+<p>And here is an example of the issues that C-style casting can run into that C++ casting can prevent :</p>
+<code class="block">
+char c = 10;
+int* p = (int*)&c;
+	
+*p = 5;                      // run-time error: stack corruption on 'c'
+p = static_cast&lt;int*&gt;( &c ); // compile-type error: invalid type conversion
+</code>
