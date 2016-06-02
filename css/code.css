@@ -11,37 +11,42 @@ code.block
     tab-size:      4;
 }
 
-code .comment
+.comment
 {
 	color: #57A64A;
 }
 
-code .string
+.string
 {
 	color: #D69D85;
 }
 
-code .keyword
+.keyword
 {
 	color: #569CD6;
 }
 
-code .datatype
+.datatype
 {
 	color: #569CD6;
 }
 
-code .preprocessor
+.cast
+{
+	color: #569CD6;
+}
+
+.preprocessor
 {
 	color: #9B9B9B;
 }
 
-code .include
+.include
 {
 	color: #D69D85;
 }
 
-code .class
+.class
 {
 	color: #4EC9B0;
 }

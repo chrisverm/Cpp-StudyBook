@@ -105,6 +105,12 @@ function colorCode( html )
 			} );
 		}
 		
+		// casting keywords
+		for ( j = 0; j < CASTING.length; j++ )
+		{
+			block = block.replace( new RegExp( CASTING[ j ] + "<", "g" ), "<span class=\"cast\">" + CASTING[ j ] + "</span>\<" );
+		}
+		
 		
 		/*
 		// preprocessor directives
