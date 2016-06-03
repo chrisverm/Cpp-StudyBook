@@ -44,113 +44,60 @@ function colorCode( html )
 	{
 		block = list[ i ].textContent + '\n';
 		
-		// strings
-		block = block.replace( /\n[^\n|\/\/]*\"[^\"|\n]*\"/g, function( str ) {
-			str = str.replace( /\"[^\"]*\"/g, function( str2 ) {
-				return "<span class=\"string\">" + str2 + "</span>";
+		// classes
+		for ( j = 0; j < CLASSES.length; j++ )
+		{
+			block = block.replace( new RegExp( CLASSES[ j ], "g" ), "<span class='class'>" + CLASSES[ j ]  + "</span>" );
+			block = block.replace( new RegExp( "<span class='class'>" + CLASSES[ j ] + "</span>\\([^\\)]*\\)[^\;]", "g"), function( str ) {
+				str = str.replace( /<\/?span[^>]*>/g, "" );
+				return str;
 			} );
-			
-			return str;
+		}
+		
+		// data types
+		for ( j = 0; j < DATATYPES.length; j++ )
+		{
+			block = block.replace( new RegExp( "[^\w]" + DATATYPES[ j ] + "[^\w]", "g" ), function( str ) {
+				return str[ 0 ] + "<span class='datatype'>" + DATATYPES[ j ] + "</span>" + str.slice( -1 ); // str[ str.length - 1 ]
+			} );
+		}
+		
+		// keywords
+		for ( j = 0; j < KEYWORDS.length; j++ )
+		{
+			block = block.replace( new RegExp( KEYWORDS[ j ] + "[ |\\:]", "g" ), function( str )
+			{
+				return "<span class='keyword'>" + KEYWORDS[ j ] + "</span>" + str.slice( -1 );
+			} );
+		}
+		
+		// casting keywords
+		for ( j = 0; j < CASTING.length; j++ )
+		{
+			block = block.replace( new RegExp( CASTING[ j ] + "<", "g" ), "<span class=\"cast\">" + CASTING[ j ] + "</span>\<" );
+		}
+		
+		// preprocessor directives
+		block = block.replace( /(#include)[^\n]*\n/g, function( str ) {
+			str = str.replace( /<\/?span[^>]*>/g, "" );
+			str = str.replace( /<([^<]*)>/, function( str2 ) {
+				return "<span class='string'>&lt;" + str2.substring( 1, str2.length - 1 ) + "&gt;</span>";
+			} );
+			return "<span class='preprocessor'>#include</span>" + str.substr( 8 );
+		} );
+		
+		// strings
+		block = block.replace( /\"([^\"]+)\"/g, function( str ) {
+			str = str.replace( /<\/?span[^>]*>/g, "" );
+			return str.replace( /"([^"]+)"/g, "<span class='string'>\"$1\"</span>" );
 		} );
 		
 		// comments
 		block = block.replace( /\/\/.*\n/g, function( str ) {
-			return "<span class=\"comment\">" + str.slice( 0, -1 ) + "</span>\n";
+			str = str.replace( /<\/?span[^>]*>/g, "" );
+			
+			return "<span class='comment'>" + str.slice( 0, -1 ) + "</span>\n";
 		});
-		
-		// preprocessor directives
-		block = block.replace( /[^\n]*\#include[^\n]*\n/g, function( str ) {
-			if ( str.search( "\/\/" ) != -1 ) return str.replace( /\</, "&lt;" ).replace( /\>/, "&gt;" );
-			return "<span class=\"preprocessor\">#include</span><span class=\"include\">" + str.replace( /\</, "&lt;" ).replace( /\>/, "&gt;" ).substr( 8 ) + "</span>";
-		} );
-		
-		// classes
-		for ( j = 0; j < CLASSES.length; j++ )
-		{
-			// [ClassName] variable | [ClassName]* variable | [ClassName]::Method
-			block = block.replace( new RegExp( CLASSES[ j ] + "( [a-z]|\\* |\:\:)", "g" ), function( str ) {
-				return "<span class=\"class\">" + str.substring( 0, str.length - 2 ) + "</span>" + str.slice( -2 );
-			} );
-			
-			// new [ClassName]
-			block = block.replace( new RegExp( "new " + CLASSES[ j ], "g" ), function( str ) {
-				return "new <span class=\"class\">" + str.substring( 4, str.length ) + "</span>";
-			} );
-			
-			// class [ClassName]
-			block = block.replace( new RegExp( "class " + CLASSES[ j ], "g" ), function( str ) {
-				return "class <span class=\"class\">" + str.substring( 6, str.length ) + "</span>";
-			} );
-			
-			// public [ClassName]
-			block = block.replace( new RegExp( "public " + CLASSES[ j ], "g" ), function( str ) {
-				return "public <span class=\"class\">" + str.substring( 7, str.length ) + "</span>";
-			} );
-		}
-		
-		// data types
-		for ( j = 0; j < DATATYPES.length; j++ )
-		{
-			block = block.replace( new RegExp( DATATYPES[ j ] + "[^a-z]", "g" ), function( str ) {
-				return "<span class=\"datatype\">" + DATATYPES[ j ] + "</span>" + str.slice( -1 );
-			} );
-		}
-		
-		// keywords
-		for ( j = 0; j < KEYWORDS.length; j++ )
-		{
-			block = block.replace( new RegExp( KEYWORDS[ j ] + "[ |\\:]", "g" ), function( str )
-			{
-				return "<span class=\"keyword\">" + KEYWORDS[ j ] + "</span>" + str.slice( -1 );
-			} );
-		}
-		
-		// casting keywords
-		for ( j = 0; j < CASTING.length; j++ )
-		{
-			block = block.replace( new RegExp( CASTING[ j ] + "<", "g" ), "<span class=\"cast\">" + CASTING[ j ] + "</span>\<" );
-		}
-		
-		
-		/*
-		// preprocessor directives
-		block = block.replace( /[^\n]*\#include[^\n]*\n/g, function( str ) {
-			if ( str.search( "\/\/" ) != -1 ) return str.replace( /\</, "&lt;" ).replace( /\>/, "&gt;" );
-			return "<span class=\"preprocessor\">#include</span><span class=\"include\">" + str.replace( /\</, "&lt;" ).replace( /\>/, "&gt;" ).substr( 8 ) + "</span>";
-		} );
-		
-		// keywords
-		for ( j = 0; j < KEYWORDS.length; j++ )
-		{
-			block = block.replace( new RegExp( KEYWORDS[ j ] + "[ |\\:]", "g" ), function( str )
-			{
-				return "<span class=\"keyword\">" + KEYWORDS[ j ] + "</span>" + str.slice( -1 );
-			} );
-		}
-		
-		// data types
-		for ( j = 0; j < DATATYPES.length; j++ )
-		{
-			block = block.replace( new RegExp( DATATYPES[ j ] + "[^a-z]", "g" ), function( str ) {
-				return "<span class=\"datatype\">" + DATATYPES[ j ] + "</span>" + str.slice( -1 );
-			} );
-		}
-		
-		// casting keywords
-		for ( j = 0; j < CASTING.length; j++ )
-		{
-			block = block.replace( new RegExp( CASTING[ j ] + "<", "g" ), "<span class=\"cast\">" + CASTING[ j ] + "</span>\<" );
-		}
-		
-		// classes
-		for ( j = 0; j < CLASSES.length; j++ )
-		{
-			block = block.replace( new RegExp( "[^\:\:|\"|a-z]" + CLASSES[ j ] + "[^\.|a-z]", "g" ), function( str ) {
-				//alert( str );
-				return str[ 0 ] + "<span class=\"class\">" + str.substr( 1, str.length - 2 ) + "</span>" + str[ str.length - 1];
-			});
-		}
-		*/
 		
 		list[ i ].innerHTML = block;
 	}
