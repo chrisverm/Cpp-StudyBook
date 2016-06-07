@@ -57,7 +57,7 @@ function colorCode( html )
 		// data types
 		for ( j = 0; j < DATATYPES.length; j++ )
 		{
-			block = block.replace( new RegExp( "[^\w]" + DATATYPES[ j ] + "[^\w]", "g" ), function( str ) {
+			block = block.replace( new RegExp( "[^a-z]" + DATATYPES[ j ] + "[^a-z]", "g" ), function( str ) {
 				return str[ 0 ] + "<span class='datatype'>" + DATATYPES[ j ] + "</span>" + str.slice( -1 ); // str[ str.length - 1 ]
 			} );
 		}
