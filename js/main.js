@@ -77,6 +77,11 @@ function colorCode( html )
 			block = block.replace( new RegExp( CASTING[ j ] + "<", "g" ), "<span class=\"cast\">" + CASTING[ j ] + "</span>\<" );
 		}
 		
+		// numbers
+		block = block.replace( /-?[0-9]+\.?[0-9]*f?/g, function( str ) {
+			return "<span class='number'>" + str + "</span>";
+		} );
+		
 		// preprocessor directives
 		block = block.replace( /(#include)[^\n]*\n/g, function( str ) {
 			str = str.replace( /<\/?span[^>]*>/g, "" );
