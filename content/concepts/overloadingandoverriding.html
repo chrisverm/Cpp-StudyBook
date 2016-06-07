@@ -1,0 +1,51 @@
+<h1>Overloading and Overriding</h1>
+<h3>Function overloading</h3>
+<p>Overloading a function is the ability for multiple functions of the same name in the same scope to be declared and defined as long as these functions have different parameters. Overloading requires functions to have different method signatures and, as shown below, can occur without inheritance :</p>
+<code class="block">
+#include &lt;iostream&gt;
+
+void Print( int i )
+{
+	std::cout << i;
+}
+void Print( char* str )
+{
+	std::cout << str;
+}
+	
+int main( void )
+{
+	Print( 17 );              // outputs "17"
+	Print( "Hellow World!" ); // outputs "Hello World!"
+	
+	return 0;
+}
+</code>
+<h3>Function overriding</h3>
+<p>Overriding a function, on the other hand, requires two functions to have the same signature (that is, the same function name <i>and</i> the same parameters). Overriding requires inheritance and is used to give different meaning an inherited function. For example :</p>
+<code class="block">
+#include &lt;iostream&gt;
+	
+class Animal
+{
+protected:
+	virtual void Move( int meters );
+};
+
+class Bird : public Animal
+{
+public:
+	void Move( int meters )
+	{
+		std::cout << "Flying " << meters << " meters";
+	}
+};
+class Dog : public Animal
+{
+public:
+	void Move( int meters )
+	{
+		std::cout << "Running " << meters << " meters";
+	}
+};
+</code>
